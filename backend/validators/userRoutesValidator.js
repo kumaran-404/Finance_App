@@ -17,6 +17,13 @@ const createValidator = async (req, res, next) => {
     .withMessage("Emi start date is invalid")
     .run(req);
 
+  await body("password")
+    .notEmpty()
+    .withMessage("password is empty")
+    .isStrongPassword()
+    .withMessage("password is weak")
+    .run(req);
+
   await body("loanTenure")
     .notEmpty()
     .withMessage("Loan Tenure is empty")
@@ -48,12 +55,35 @@ const searchValidator = async (req, res, next) => {
   next();
 };
 
+const getByMonthValidator = async (req, res, next) => {
+  await body("month")
+    .notEmpty()
+    .withMessage("month is empty")
+    .isInt({ max: 11, min: 0 })
+    .withMessage("Month should be in range 0-11")
+    .run(req);
+
+  await body("year")
+    .notEmpty()
+    .withMessage("year is empty")
+    .isInt({ max: 2030, min: 2015 })
+    .withMessage("Year should be in range 2015-2030")
+    .run(req);
+
+  next();
+};
+
 const updateValidator = async (req, res, next) => {
-  await body("_id")
+  await body("id")
     .notEmpty()
     .withMessage("Id is empty")
     // .isArray()
     // .withMessage("Ids should be array")
+    .run(req);
+
+  await body("amountPaid")
+    .notEmpty()
+    .withMessage("amount paid is empty")
     .run(req);
 
   await body("paid")
@@ -70,4 +100,5 @@ module.exports = {
   createValidator,
   searchValidator,
   updateValidator,
+  getByMonthValidator,
 };

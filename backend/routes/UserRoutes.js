@@ -1,14 +1,102 @@
 const router = require("express").Router();
 const Users = require("../models/User");
+const Pay = require("../models/pay");
 const { ErrorMessage, SuccessMessage } = require("../utils/handler");
 const { body } = require("express-validator");
 const { validator } = require("../validators/index");
 const userValidator = require("../validators/userRoutesValidator");
+const User = require("../models/User");
+const { Op } = require("sequelize");
+const sequelize = require("../utils/DBConnection");
+const bcrypt = require("bcrypt");
 
 // get all users
 router.get("/", async (req, res) => {
   try {
-    const result = await Users.find({}).sort({ name: 1 });
+    const result = await Users.findAll({ order: ["name"] });
+
+    return SuccessMessage(result, res);
+  } catch (err) {
+    return ErrorMessage(err.message, res);
+  }
+});
+
+// get for particular month 
+router.post(
+  "/month",
+  userValidator.getByMonthValidator,
+  validator,
+  async (req, res) => {
+    try {
+      const { month, year } = req.body;
+
+      let result = await Pay.findAll({
+        where: {
+          month,
+          year,
+        },
+        order: ["date", "time"],
+        include: {
+          model: Users,
+          attributes: ["id", "name", "phoneNumber"],
+        },
+      });
+
+      let data = {},
+        amount = {};
+
+      result.map((item) => {
+        const date =
+          item.getDataValue("date") +
+          "-" +
+          item.getDataValue("month") +
+          "-" +
+          item.getDataValue("year");
+
+        if (!(date in data)) {
+          data[date] = [];
+          amount[date] = 0;
+        }
+
+        amount[date] += item.getDataValue("amountPaid");
+
+        data[date].push({
+          name: item.getDataValue("User").getDataValue("name"),
+          phoneNumber: item.getDataValue("User").getDataValue("phoneNumber"),
+          time: item.getDataValue("time"),
+          UserId: item.getDataValue("UserId"),
+        });
+      });
+
+      return SuccessMessage({ amount, data }, res);
+    } catch (err) {
+      return ErrorMessage(err.message, res);
+    }
+  }
+);
+
+//get specific user
+// only route authorised to user 
+router.get("/user/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const user = await Users.findOne({
+      where: {
+        id,
+      },
+      include: {
+        model: Pay,
+      },
+    });
+
+    if (!user) return ErrorMessage("User not Found", res);
+
+    const result = await Pay.findAll({
+      where: {
+        id,
+      },
+    });
 
     return SuccessMessage(result, res);
   } catch (err) {
@@ -25,7 +113,11 @@ router.post(
     try {
       const data = req.body;
 
-      await Users.create(data);
+      let { password } = req.body;
+
+      password = await bcrypt.hash(password, 10);
+
+      await Users.create({ ...data, password });
 
       return SuccessMessage({}, res);
     } catch (err) {
@@ -43,53 +135,60 @@ router.post(
   validator,
   async (req, res, next) => {
     try {
-      const { _id, paid } = req.body;
+      const { id, paid, amountPaid } = req.body;
 
-      const date = new Date(),
-        month = date.getMonth(),
-        year = date.getFullYear();
+      const today = new Date();
 
-      console.log(month, year);
+      const month = today.getMonth(),
+        year = today.getFullYear(),
+        date = today.getDate(),
+        time = today.toLocaleTimeString();
 
       const user = await Users.findOne({
-        _id,
-        monthlyPay: { $elemMatch: { month, year } },
+        where: {
+          id,
+        },
+      });
+
+      if (!user) return ErrorMessage("User Not Found", res);
+
+      const pay = await Pay.findOne({
+        where: {
+          UserId: id,
+          month,
+          year,
+        },
       });
 
       if (paid) {
-        if (user) return ErrorMessage("Payment for this already done", res);
+        if (pay) {
+          return ErrorMessage("Paid already", res);
+        }
 
-        await Users.updateOne(
-          { _id },
-          {
-            $push: {
-              monthlyPay: {
-                month,
-                year,
-                date,
-              },
-            },
-          }
-        );
+        await Pay.create({
+          month,
+          year,
+          date,
+          time,
+          amountPaid,
+          UserId: id,
+        });
+
+        return SuccessMessage({}, res);
       }
 
-      if (user) {
-        await Users.updateOne(
-          { _id },
-          {
-            $pull: {
-              monthlyPay: {
-                month,
-                year,
-              },
-            },
-          }
-        );
-
-        return SuccessMessage("Payment updated", res);
+      if (pay) {
+        await Pay.destroy({
+          where: {
+            UserId: id,
+            month,
+            year,
+          },
+        });
+        return SuccessMessage({}, res);
       }
 
-      return ErrorMessage("Payment is not done yet", res);
+      return ErrorMessage("No payment made for this User", res);
     } catch (err) {
       return ErrorMessage(err.message, res);
     }
@@ -102,50 +201,21 @@ router.get(
   validator,
   async (req, res, next) => {
     try {
-      const name = req.body.name;
+      const { name } = req.body;
 
-      const result = await Users.find({
-        name: {
-          $regex: name,
+      const users = await User.findAll({
+        where: {
+          name: {
+            [Op.substring]: name,
+          },
         },
-      }).sort();
+      });
 
-      return SuccessMessage(result, res);
+      return SuccessMessage(users, res);
     } catch (err) {
       return ErrorMessage(err.message, res);
     }
   }
 );
-
-// [
-//   {month :10 ,year:2023,date :"10/10/2033"}
-// ]
-
-// [
-//   {month :11 ,year:2023,date :"10/10/2033"}
-// ]
-// [
-//   {month :10 ,year:2023,date :"10/10/2033"}
-// ]
-
-router.get("/month", async (req, res) => {
-  const month = 10,
-    year = 2023;
-
-  try {
-    const result = await Users.find({
-      monthlyPay: {
-        $elemMatch: {
-          month: "9",
-          year: "2023",
-        },
-      },
-    });
-
-    return SuccessMessage(result, res);
-  } catch (err) {
-    return ErrorMessage(err.message, res);
-  }
-});
 
 module.exports = router;

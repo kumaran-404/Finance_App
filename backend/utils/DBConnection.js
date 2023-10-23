@@ -1,18 +1,36 @@
-const mongoose = require("mongoose");
-const url = process.env.DATABASE_URL;
+const { Sequelize } = require("sequelize");
 
-const connect =  () => {
-  mongoose.connect(url);
+const sequelize = new Sequelize({
+  username: "kumaran",
+  password: "kumaran",
+  database: "BV_Finance",
+  host: "localhost",
+  dialect: "postgres",
+  pool: {
+    max: 5,
+    min: 0,
+    acquire: 30000,
+    idle: 10000,
+  },
+});
 
-  const connection = mongoose.connection;
-
-  connection.on("error", (message) => {
-    console.log(message);
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log("Connection has been established successfully.");
+  })
+  .catch((error) => {
+    console.error("Unable to connect to the database: ", error);
   });
 
-  connection.once("open", (message) => {
-    console.log("DataBase Connected ");
+//sequelize.sync({ force: true }).then(() => console.log("Deleted all"));
+sequelize
+  .sync()
+  .then(() => {
+    console.log("Tables created successfully");
+  })
+  .catch((error) => {
+    console.error("Error creating tables:", error);
   });
-};
 
-module.exports = connect();
+module.exports = sequelize;

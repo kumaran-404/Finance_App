@@ -1,37 +1,46 @@
-const mongoose = require("mongoose");
-const { Schema } = mongoose;
+const { Sequelize, DataTypes } = require("sequelize");
+const sequelize = require("../utils/DBConnection");
 
-const UserSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
+const User = sequelize.define(
+  "User",
+  {
+    isAdmin: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    password: {
+      type: DataTypes.STRING,
+    },
+    name: {
+      type: DataTypes.STRING,
+    },
+    phoneNumber: {
+      type: DataTypes.STRING,
+      unique: true,
+    },
+    emiStartDate: {
+      type: DataTypes.DATE,
+    },
+    loanTenure: {
+      type: DataTypes.INTEGER,
+    },
+    interestRate: {
+      type: DataTypes.FLOAT,
+    },
+    totalAmount: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
+    remainingAmount: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
+    monthlyAmount: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
   },
-  phoneNumber: {
-    type: String,
-    unique: true,
-  },
-  emiStartDate: {
-    type: Date,
-  },
-  loanTenure: {
-    type: Date,
-  },
-  interestRate: {
-    type: Number,
-  },
-  monthlyPay: {
-    type: [
-      {
-        month: Number,
-        year: Number,
-        date: Date,
-      },
-    ],
-  },  
-  balance : {
-    type :  Number ,
-    default : 0 
-  }
-},{timestamps : true});
+  { freezeTableName: true }
+);
 
-module.exports =mongoose.model("Users", UserSchema);
+module.exports = User;
