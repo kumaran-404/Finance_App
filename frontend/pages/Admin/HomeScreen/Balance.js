@@ -1,43 +1,33 @@
-import { Surface,IconButton ,Text } from "react-native-paper";
-import SvgComponent from "../../../components/svgs";
-import { StyleSheet } from "react-native";
+import { Surface, Text } from "react-native-paper";
+import { StyleSheet, View } from "react-native";
+import { useContext } from "react";
+import { Context } from "..";
+import { FlexColumn } from "../../../utils/components";
 
 const Balance = () => {
+  const ctx = useContext(Context);
+
   return (
     <Surface elevation={3} style={styles.balance}>
-      <div>
-        <SvgComponent />
-      </div>
+      <FlexColumn alignItems={"flex-start"} gap="1rem">
+        <Text>Monthly Balance</Text>
 
-      <div>
-        <div>
-          <Text style={{ fontWeight: "700", fontFamily: "sans-serif" }}>
-            Monthly Balance
+        <View style={styles.balance_amount}>
+          <Text variant="titleLarge">
+            ₹{JSON.stringify(ctx.amount.paid)} of
           </Text>
-        </div>
-        <div style={styles.balance_amount}>
-          <Text variant="titleLarge">$15,560.00</Text>
-          <IconButton icon="menu-right"></IconButton>
-        </div>
-      </div>
+          <Text variant="titleLarge"> ₹{JSON.stringify(ctx.amount.total)}</Text>
+        </View>
+      </FlexColumn>
     </Surface>
   );
 };
 
 const styles = StyleSheet.create({
-  balance_amount: {
-    display: "flex",
-    alignItems: "center",
-  },
   balance: {
-    width: "100%",
-    borderRadius: "20px",
     padding: "2rem",
+    borderRadius: "10px",
     backgroundColor: "white",
-    display: "flex",
-    gap: "10px",
-    flexDirection: "row-reverse",
-    alignItems: "center",
   },
 });
 

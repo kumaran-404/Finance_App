@@ -27,15 +27,27 @@ const User = sequelize.define(
     interestRate: {
       type: DataTypes.FLOAT,
     },
+    principal: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
     totalAmount: {
+      // loanTenure*monthlyAmount
+      // with interest 
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
+    monthsAlreadyPaid: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
     },
     remainingAmount: {
+      // totalAmount - monthsAlreadyPaid*emi
       type: DataTypes.INTEGER,
       defaultValue: 0,
     },
     monthlyAmount: {
+      // emi
       type: DataTypes.INTEGER,
       defaultValue: 0,
     },

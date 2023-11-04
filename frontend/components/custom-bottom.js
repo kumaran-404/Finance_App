@@ -1,4 +1,4 @@
-import { Button, ActivityIndicator } from "react-native-paper";
+import { Button, ActivityIndicator, Text } from "react-native-paper";
 
 function CustomButton({ isLoading, onPress, text }) {
   return (
@@ -22,7 +22,7 @@ function CustomButton({ isLoading, onPress, text }) {
             style={{ position: "absolute", left: "0" }}
             animating={isLoading}
           ></ActivityIndicator>
-          <span>{text}</span>
+          <Text>{text}</Text>
         </div>
       </Button>
     </>

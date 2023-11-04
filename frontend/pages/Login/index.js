@@ -2,12 +2,28 @@ import { useState } from "react";
 import { StyleSheet, View, Image } from "react-native";
 import { Text, TextInput } from "react-native-paper";
 import CustomButton from "../../components/custom-bottom";
-import { Platform } from "react-native";
-function Login() {
+import { login } from "../../api";
+
+function Login({ setSnackbar, setSnackbarData }) {
   const [loading, setLoading] = useState(false);
   const [isPassword, setPassword] = useState(true);
 
-  const handler = () => {};
+  const handler = async () => {
+    const phoneNumber = document.getElementById("phoneNumber").value,
+      password = document.getElementById("password").value;
+
+    const resp = await login(
+      { phoneNumber, password },
+      setSnackbar,
+      setSnackbarData
+    );
+
+    if (resp) {
+      console.log(resp);
+      localStorage.setItem("jwtToken", resp);
+      window.location.reload();
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -18,10 +34,15 @@ function Login() {
       <TextInput.Icon icon=""></TextInput.Icon>
 
       <div style={styles.box}>
-        <Text style={{ fontSize: "20px", fontWeight: "bolder" }}>Login</Text>
+        <Text style={{  fontWeight: "600" }}>Login</Text>
         <Text>Please Signin to Continue</Text>
-        <TextInput mode="outlined" label="Phone Number"></TextInput>
         <TextInput
+          id="phoneNumber"
+          mode="outlined"
+          label="Phone Number"
+        ></TextInput>
+        <TextInput
+          id="password"
           mode="outlined"
           label="Password"
           secureTextEntry={isPassword}
@@ -51,22 +72,7 @@ const styles = StyleSheet.create({
   container: {
     display: "flex",
     gap: "1rem",
-    // ...Platform.select({
-    //   web: {
-    //     width: "30%",
-
-    //     position: "absolute",
-    //     top: "50%",
-    //     left: "50%",
-    //     transform: "translate(-50%,-50%)",
-    //   },
-    //   android: {
-    //     width: "100%",
-    //   },
-    //   ios: {
-    //     width: "100%",
-    //   },
-    // }),
+   
   },
   box: {
     display: "flex",

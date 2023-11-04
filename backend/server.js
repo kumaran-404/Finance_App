@@ -5,28 +5,35 @@ dotenv.config();
 const DBConnection = require("./utils/DBConnection");
 const userRoutes = require("./routes/UserRoutes");
 const authRoutes = require("./routes/authRoutes");
-const { ErrorMessage } = require("./utils/handler");
+const { ErrorMessage,tokenErrorMessage } = require("./utils/handler");
 const { getToken } = require("./validators/token");
+const cors = require("cors");
 
 app.use(express.json());
+
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 require("./models/User");
 
 app.use("/api/auth", authRoutes);
 
-app.use((req, res, next) => {
-  try {
-    const token = getToken(req);
+// app.use((req, res, next) => {
+//   try {
+//     const token = getToken(req);
 
-    if (!token) return ErrorMessage("JWT invalid", res);
+//     if (!token) return tokenErrorMessage( res);
 
-    res.locals.data = token;
+//     res.locals.data = token;
 
-    next();
-  } catch (err) {
-    return ErrorMessage(err.message, res);
-  }
-});
+//     next();
+//   } catch (err) {
+//     return ErrorMessage(err.message, res);
+//   }
+// });
 
 app.use("/api/users", userRoutes);
 

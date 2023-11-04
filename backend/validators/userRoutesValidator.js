@@ -13,7 +13,7 @@ const createValidator = async (req, res, next) => {
   await body("emiStartDate")
     .notEmpty()
     .withMessage("Emi start date is empty")
-    .isDate({ format: "DD-MM-YYYY" })
+    .isDate({ format: "MM/DD/YYYY" })
     .withMessage("Emi start date is invalid")
     .run(req);
 
@@ -31,6 +31,13 @@ const createValidator = async (req, res, next) => {
     .withMessage("Loan Tenure is invalid")
     .run(req);
 
+  await body("principal")
+    .notEmpty()
+    .withMessage("principal amount is empty")
+    .isNumeric()
+    .withMessage("principal amount is invalid")
+    .run(req);
+
   await body("interestRate")
     .notEmpty()
     .withMessage("Interest rate is empty")
@@ -38,19 +45,24 @@ const createValidator = async (req, res, next) => {
     .withMessage("Interset rate should be float")
     .run(req);
 
+  await body("monthsAlreadyPaid")
+    .notEmpty()
+    .withMessage("Number of months paid is empty")
+    .run(req);
+
   next();
 };
 
 const searchValidator = async (req, res, next) => {
-  await body("name")
-    .notEmpty()
-    .withMessage("Name is Empty")
-    .custom((value) => {
-      console.log(!value);
-      if (!value) throw new Error("Name is not valid");
-      return true;
-    })
-    .run(req);
+  // await body("searchParam")
+  //   .notEmpty()
+  //   .withMessage("searh Param is empty")
+  //   .custom((value) => {
+  //     console.log(!value);
+  //     if (!value) throw new Error("searh Param is not valid");
+  //     return true;
+  //   })
+  //   .run(req);
 
   next();
 };
@@ -81,10 +93,10 @@ const updateValidator = async (req, res, next) => {
     // .withMessage("Ids should be array")
     .run(req);
 
-  await body("amountPaid")
-    .notEmpty()
-    .withMessage("amount paid is empty")
-    .run(req);
+  // await body("amountPaid")
+  //   .notEmpty()
+  //   .withMessage("amount paid is empty")
+  //   .run(req);
 
   await body("paid")
     .notEmpty()
