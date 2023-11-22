@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View, Image } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import readXlsxFile from "read-excel-file";
 
@@ -7,6 +7,8 @@ import CustomCalendar from "./CustomCalendar";
 import { useContext, useState } from "react";
 import { createUsers } from "../../../api";
 import { Context } from "..";
+import { customContext } from "../../../App";
+import { FlexRow } from "../../../utils/components";
 
 const day = {
   0: "Sunday",
@@ -21,25 +23,53 @@ const day = {
 function HomeScreen() {
   const [user, setUsers] = useState([]);
 
-  const ctx = useContext(Context);
+  const ctx = useContext(Context),
+    ctx2 = useContext(customContext);
+
+  const [isUploading, setIsUploading] = useState(false);
 
   const upload = async () => {
-    const resp = await createUsers(user);
-    console.log(resp);
+    const file = document.getElementById("file");
+
+    if (file.files[0] === undefined) {
+      ctx2.setSnackbarData({
+        message: "Empty File",
+        severity: "error",
+      });
+      return;
+    }
+
+    setIsUploading(true);
+
+    const resp = await createUsers(user, ctx2.setSnackbarData);
+
+    setIsUploading(false);
 
     if (resp) {
       ctx.setRefetch((prev) => !prev);
+    } else {
     }
   };
 
+  const logout = ()=>{
+    
+    localStorage.removeItem("jwtToken");
+    window.location.reload()
+
+  }
+
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text>{day[new Date().getDay()]}</Text>
-        <Text variant="headlineSmall">
-          {new Date().getDate()} / {new Date().getMonth() + 1}
-        </Text>
+      <View style={styles.wrapper}>
+        <View style={styles.header}>
+          <Text>{day[new Date().getDay()]}</Text>
+          <Text variant="headlineSmall">
+            {new Date().getDate()} / {new Date().getMonth() + 1}
+          </Text>
+        </View>
+        <Button mode="outlined" onPress={logout} style={{borderRadius:"10px" , padding:"0.1rem"}} icon={"logout"}>Logout</Button>
       </View>
+
       <Balance />
 
       <View
@@ -55,6 +85,7 @@ function HomeScreen() {
       >
         <input
           type="file"
+          id="file"
           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
           onChange={(e) => {
             let label = [];
@@ -84,11 +115,12 @@ function HomeScreen() {
           style={{
             width: "max-content",
             borderRadius: "10px",
-            backgroundColor: "blue",
+            backgroundColor: isUploading ? "#EBEBE4" : "blue",
           }}
           onPress={upload}
+          disabled={isUploading}
         >
-          Upload Excel Sheet
+          {isUploading ? "Please Wait ..." : "Upload Excel Sheet"}
         </Button>
       </View>
 
@@ -98,10 +130,14 @@ function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent:"space-between",
+    padding:"1rem"
+  },
   header: {
-    //backgroundColor: "rgb(49, 77, 223)",
-    height: "10vh",
-    width: "100%",
+    width: "max-content",
     color: "white",
     display: "flex",
     flexDirection: "column",

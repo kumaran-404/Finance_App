@@ -6,7 +6,7 @@ function Loader() {
     <CenterItem>
       <FlexColumn>
         <ActivityIndicator size="large" />
-        <Text style={{ padding: "1rem", width: "100%" }} variant="titleLarge">
+        <Text  variant="titleLarge">
           BV Finance
         </Text>
       </FlexColumn>

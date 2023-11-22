@@ -28,83 +28,108 @@ export const verifyJWT = async () => {
   }
 };
 
-const triggerSnackBar = (message, severity, setSnackbar, setSnackbarData) => {
-  setSnackbarData({ message, severity });
-  setSnackbar(true);
-};
-
 ////////////////////////////////
-export const login = async (data, setSnackbar, setSnackbarData) => {
+export const login = async (data, setSnackbarData) => {
   try {
     const resp = await axiosObj.post(`/auth/login`, data);
+    setSnackbarData({
+      message: "Welcome back",
+      severity: "success",
+    });
 
+    setTimeout(() => {}, 4000);
     return resp.data.data.token;
   } catch (err) {
-    triggerSnackBar(
-      err.response.data.error,
-      "error",
-      setSnackbar,
-      setSnackbarData
-    );
+    setSnackbarData({
+      message: err.response.data.error,
+      severity: "error",
+    });
+
     return null;
   }
 };
 
 ////////////////////////////////
 
-export const monthWise = async (month, year) => {
+export const monthWise = async (month, year, setSnackbarData) => {
   try {
     console.log(month, year);
     const resp = await axiosObj.post("/users/month", { month, year });
     return resp;
   } catch (err) {
+    setSnackbarData({
+      message: err.response.data.error,
+      severity: "error",
+    });
     return null;
   }
 };
 
 /////////////////////////////////
 
-export const searchUser = async (data) => {
+export const searchUser = async (data, setSnackbarData) => {
   try {
     const resp = await axiosObj.post("/users/search", data);
     return resp;
   } catch (err) {
-    console.log(err);
+    setSnackbarData({
+      message: err.response.data.error,
+      severity: "error",
+    });
     return null;
   }
 };
 
 //////////////////////////////////
 
-export const fetchUser = async (id) => {
+export const fetchUser = async (id, setSnackbarData) => {
   try {
     const resp = await axiosObj.get(`/users/${id}`);
+
     return resp;
   } catch (err) {
-    console.log(err);
+    setSnackbarData({
+      message: err.response.data.error,
+      severity: "error",
+    });
     return null;
   }
 };
 
 ////////////////////////////////
 
-export const updateUsers = async (data) => {
+export const updateUsers = async (data, setSnackbarData) => {
   try {
     const resp = await axiosObj.post(`/users/update`, data);
+
+    setSnackbarData({
+      message: "Updated!!",
+      severity: "success",
+    });
     return resp;
   } catch (err) {
-    console.log(err.response);
+    setSnackbarData({
+      message: err.response.data.error,
+      severity: "error",
+    });
     return null;
   }
 };
 //////////////////////////////////
 
-export const createUsers = async (data) => {
+export const createUsers = async (data, setSnackbarData) => {
   try {
     const resp = await axiosObj.post(`/users/create-users`, data);
+    setSnackbarData({
+      message: "Users created successfull",
+      severity: "success",
+    });
     return resp;
   } catch (err) {
-    console.log(err.response);
+    setSnackbarData({
+      message: err.response.data.error,
+      severity: "error",
+    });
     return null;
   }
 };

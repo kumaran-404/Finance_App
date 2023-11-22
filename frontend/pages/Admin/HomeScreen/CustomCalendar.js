@@ -12,6 +12,7 @@ import { monthWise } from "../../../api";
 import { Context } from "..";
 import { View } from "react-native";
 import { FlexColumn } from "../../../utils/components";
+import { customContext } from "../../../App";
 
 function CustomCalendar() {
   const [visible, setVisible] = useState(null);
@@ -19,7 +20,8 @@ function CustomCalendar() {
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
   const [monthWiseData, setMonthWiseData] = useState({});
-  const ctx = useContext(Context);
+  const ctx = useContext(Context),
+    ctx2 = useContext(customContext);
   const [initial, setInitial] = useState(true);
 
   useEffect(() => {
@@ -47,7 +49,7 @@ function CustomCalendar() {
     }
 
     (async () => {
-      const resp = await monthWise(month, year);
+      const resp = await monthWise(month, year, ctx.setSnackbarData);
 
       if (resp) {
         let temp = {};
@@ -70,8 +72,18 @@ function CustomCalendar() {
   }, [month, year]);
 
   return (
-    <View style={{ marginTop: "2rem" }}>
+    <View
+      style={{
+        marginTop: "2rem",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "stretch",
+        gap: "2rem",
+      }}
+    >
+      <Text style={{ alignSelf: "center" }}>Tap on dates to view payments</Text>
       <Calendar
+        style={{ width: "100%" }}
         renderArrow={(direction) => {
           if (direction === "left")
             return <IconButton icon="menu-left"></IconButton>;
@@ -103,10 +115,13 @@ function CustomCalendar() {
             {visible &&
               visible.users.map((user) => {
                 return (
-                  <View
+                  
+                  <View>
+<View
                     style={{
                       display: "flex",
-
+                      paddingTop:"1rem" ,
+                      paddingBottom : "1rem" ,  
                       flexDirection: "row",
                       alignItems: "center",
                       justifyContent: "space-between",
@@ -118,6 +133,9 @@ function CustomCalendar() {
                     </FlexColumn>
 
                     <Text> ₹{user.amount}</Text>
+                    
+                  </View>
+                  <Divider style={{height:"0.1rem"}}></Divider>
                   </View>
                 );
               })}

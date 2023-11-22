@@ -2,11 +2,11 @@ import Login from "./pages/Login";
 import Admin from "./pages/Admin";
 
 
-export function ProtectedRoute({ isAdmin , setSnackbarData}) {
+export function ProtectedRoute({ isAdmin }) {
 
   if (isAdmin) {
     return (
-      <Admin setSnackbarData={setSnackbarData}/>
+      <Admin />
     );
   }
 
@@ -15,10 +15,10 @@ export function ProtectedRoute({ isAdmin , setSnackbarData}) {
   </div>;
 }
 
-export function PublicRoute({ setSnackbar, setSnackbarData }) {
+export function PublicRoute() {
   return (
     <>
-      <Login setSnackbar={setSnackbar} setSnackbarData={setSnackbarData} />
+      <Login />
     </>
   );
 }

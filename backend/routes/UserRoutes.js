@@ -389,6 +389,7 @@ router.post("/create-users", async (req, res) => {
   try {
     const data = req.body;
 
+  
     for (let i = 0; i < data.length; i++) {
       let { password, loanTenure, interestRate, monthsAlreadyPaid, principal } =
         data[i];

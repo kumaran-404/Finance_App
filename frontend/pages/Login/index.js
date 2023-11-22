@@ -1,25 +1,42 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { StyleSheet, View, Image } from "react-native";
-import { Text, TextInput } from "react-native-paper";
-import CustomButton from "../../components/custom-bottom";
+import { Button, Text, TextInput } from "react-native-paper";
 import { login } from "../../api";
+import { customContext } from "../../App";
 
-function Login({ setSnackbar, setSnackbarData }) {
+function Login() {
   const [loading, setLoading] = useState(false);
   const [isPassword, setPassword] = useState(true);
+
+  const ctx = useContext(customContext);
 
   const handler = async () => {
     const phoneNumber = document.getElementById("phoneNumber").value,
       password = document.getElementById("password").value;
 
-    const resp = await login(
-      { phoneNumber, password },
-      setSnackbar,
-      setSnackbarData
-    );
+    if (phoneNumber.trim().length != 10) {
+      ctx.setSnackbarData({
+        message: "Number should be 10 digits",
+        severity: "error",
+      });
+      return;
+    }
+
+    if (password.trim().length == 0) {
+      ctx.setSnackbarData({
+        message: "Empty password",
+        severity: "error",
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    const resp = await login({ phoneNumber, password }, ctx.setSnackbarData);
+
+    setLoading(false);
 
     if (resp) {
-      console.log(resp);
       localStorage.setItem("jwtToken", resp);
       window.location.reload();
     }
@@ -29,13 +46,11 @@ function Login({ setSnackbar, setSnackbarData }) {
     <View style={styles.container}>
       <Image
         style={styles.image}
-        source={require("../../assets/welcome.png")}
+        source={require("./login2.avif")}
       ></Image>
-      <TextInput.Icon icon=""></TextInput.Icon>
 
-      <div style={styles.box}>
-        <Text style={{  fontWeight: "600" }}>Login</Text>
-        <Text>Please Signin to Continue</Text>
+      <View style={styles.box}>
+        <Text variant="headlineSmall">Login</Text>
         <TextInput
           id="phoneNumber"
           mode="outlined"
@@ -55,24 +70,30 @@ function Login({ setSnackbar, setSnackbarData }) {
             ></TextInput.Icon>
           }
         ></TextInput>
-        <CustomButton
-          text="Login"
+
+        <Button
+          mode="contained"
+          style={{
+            backgroundColor: loading ? "#EBEBE4" : "blue",
+            borderRadius:"7px"
+          }}
+          textColor="white"
           onPress={handler}
-          isLoading={false}
-        ></CustomButton>
-      </div>
+          disabled={loading}
+        >
+          {loading?"Please Wait...":"Login"}
+        </Button>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  image: {
-    height: "1rem",
-  },
+
   container: {
     display: "flex",
     gap: "1rem",
-   
+    alignItems:"center"
   },
   box: {
     display: "flex",
@@ -88,8 +109,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#0E2375",
   },
   image: {
-    height: "15rem",
-    width: "100%",
+    height: 200,
+    width: 200,
+    marginTop:"3rem" , 
   },
   button: {
     backgroundColor: "#0E2375",

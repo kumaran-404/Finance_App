@@ -1,14 +1,18 @@
 import HomeScreen from "./HomeScreen";
 import UserScreen from "./userScreen";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import { useState, useEffect, createContext } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 import { monthWise } from "../../api";
+import { customContext } from "../../App";
 
 const Tab = createMaterialBottomTabNavigator();
 
 export const Context = createContext(null);
 
-function Admin({ setSnackbarData }) {
+function Admin() {
+
+  const ctx = useContext(customContext)
+  const [fetching,setFetching] = useState(false)
   const [data, setData] = useState([]);
   const [paid, setPaid] = useState([]);
   const [unpaid, setUnpaid] = useState([]);
@@ -23,7 +27,11 @@ function Admin({ setSnackbarData }) {
         month = date.getMonth(),
         year = date.getFullYear();
 
-      const resp = await monthWise(month, year);
+      setFetching(true)
+
+      const resp = await monthWise(month, year , ctx.setSnackbarData);
+
+      setFetching(false)
 
       if (resp) {
         setPaid(resp.data.data.paid);
@@ -54,6 +62,7 @@ function Admin({ setSnackbarData }) {
         setRefetch,
         monthWiseData,
         setMonthWiseData,
+        fetching 
       }}
     >
       <Tab.Navigator

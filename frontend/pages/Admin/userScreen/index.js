@@ -18,6 +18,8 @@ import Profile from "./profile";
 import UserList from "./userList";
 import { Context } from "..";
 import { FlexRow } from "../../../utils/components";
+import { customContext } from "../../../App";
+
 const Stack = createNativeStackNavigator();
 
 function UserScreen({ route, navigation }) {
@@ -39,7 +41,8 @@ const mp = {
 
 // screen shown on rendering
 function Entry({ navigation, route }) {
-  const ctx = useContext(Context);
+  const ctx = useContext(Context),
+    ctx2 = useContext(customContext);
   const [selectedUser, setSelectedUser] = useState({});
   const [currentData, setCurrentData] = useState(ctx.data);
   const [mode, setMode] = useState(0); // 0 : view all , 1 : view paid , 2 : view unpaid
@@ -49,16 +52,20 @@ function Entry({ navigation, route }) {
   const [value, setValue] = useState("Amount");
   const [order, setOrder] = useState("ascending");
   const [initial, setInitial] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleKeyPress = async (event) => {
     if (event.keyCode !== 13) return;
 
     if (document.getElementById("search-bar").value.length === 0) return;
 
-    const resp = await searchUser({
-      searchParam: document.getElementById("search-bar").value,
-      mode,
-    });
+    const resp = await searchUser(
+      {
+        searchParam: document.getElementById("search-bar").value,
+        mode,
+      },
+      ctx2.setSnackbarData
+    );
 
     if (resp) {
       setCurrentData(resp.data.data);
@@ -122,13 +129,19 @@ function Entry({ navigation, route }) {
   }, [mode, ctx.paid, ctx.unpaid]);
 
   const update = async () => {
-    console.log(selectedUser);
     if (Object.keys(selectedUser).length === 0) return;
 
-    const resp = await updateUsers({
-      id: Object.keys(selectedUser),
-      paid: mode == 1 ? false : true,
-    });
+    setIsUploading(true);
+
+    const resp = await updateUsers(
+      {
+        id: Object.keys(selectedUser),
+        paid: mode == 1 ? false : true,
+      },
+      ctx2.setSnackbarData
+    );
+
+    setIsUploading(false);
 
     if (resp) {
       ctx.setRefetch((prev) => !prev);
@@ -287,21 +300,43 @@ function Entry({ navigation, route }) {
 
       {mode > 0 && Object.keys(selectedUser).length > 0 && (
         <Button
-          style={{ width: "max-content", borderRadius: "10px" }}
+          style={{
+            width: "max-content",
+            borderRadius: "10px",
+            backgroundColor: isUploading ? "#EBEBE4" : "blue",
+          }}
           mode="contained"
           onPress={update}
+          disabled={isUploading}
         >
-          Move to {mode == 1 ? "Unpay" : "Pay"}
+          {isUploading
+            ? "Please Wait..."
+            : "Move to " + (mode == 1 ? "Unpay" : "Pay")}
         </Button>
       )}
 
-      <UserList
-        setSelectedUser={setSelectedUser}
-        selectedUser={selectedUser}
-        navigation={navigation}
-        data={currentData}
-        mode={mode}
-      ></UserList>
+      {ctx.fetching ? (
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "2rem",
+          }}
+        >
+          <Text>Please Wait...</Text>
+          <ActivityIndicator></ActivityIndicator>
+        </View>
+      ) : (
+        <UserList
+          setSelectedUser={setSelectedUser}
+          selectedUser={selectedUser}
+          navigation={navigation}
+          data={currentData}
+          mode={mode}
+        ></UserList>
+      )}
     </View>
   );
 }
@@ -314,11 +349,13 @@ function User({ route, navigation }) {
 
   const [userData, setUserData] = useState(null);
 
+  const ctx = useContext(customContext);
+
   useEffect(() => {
     //setLoading(true);
     const func = async () => {
       const { data } = route.params;
-      const resp = await fetchUser(data.id);
+      const resp = await fetchUser(data.id, ctx.setSnackbarData);
 
       if (resp) {
         setUserData(resp.data.data);

@@ -12,10 +12,13 @@ import { FlexColumn } from "../../../utils/components";
 import Svg, { Circle, Text as SvgText } from "react-native-svg";
 import { updateUsers } from "../../../api";
 import { Context } from "..";
+import { customContext } from "../../../App";
 
 function Profile({ data, navigation, setRefetch }) {
   const [paid, setPaid] = useState(false);
-  const ctx = useContext(Context);
+  const [isUploading, setIsUploading] = useState(false);
+  const ctx = useContext(Context),
+    ctx2 = useContext(customContext);
   useEffect(() => {
     const thisMonth = new Date().getMonth();
 
@@ -27,10 +30,16 @@ function Profile({ data, navigation, setRefetch }) {
   }, []);
 
   const update = async () => {
-    const resp = await updateUsers({
-      paid: !paid,
-      id: [data.id],
-    });
+    setIsUploading(true);
+    const resp = await updateUsers(
+      {
+        paid: !paid,
+        id: [data.id],
+      },
+      ctx2.setSnackbarData
+    );
+
+    setIsUploading(false);
 
     if (resp) {
       setPaid((prev) => !prev);
@@ -85,9 +94,19 @@ function Profile({ data, navigation, setRefetch }) {
             <Button
               onPress={update}
               mode="contained"
-              style={{ marginTop: "2rem" }}
+              disabled={isUploading}
+              textColor="black"
+              style={{
+               
+                backgroundColor: isUploading ? "#EBEBE4" : "#F0F8FF",
+                marginTop: "2rem",
+              }}
             >
-              {paid ? "Remove From Paid" : "Add to Paid"}
+              {isUploading
+                ? "Please Wait..."
+                : paid
+                ? "Remove From Paid"
+                : "Add to Paid"}
             </Button>
           }
         </FlexColumn>
