@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = "http://localhost:3000/api";
+const baseURL = "https://finance-app-2jdx.onrender.com/api";
 
 const axiosObj = axios.create({
   baseURL,

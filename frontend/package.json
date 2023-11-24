@@ -6,8 +6,8 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web",
-    "build": "npx expo export:web && npx serve web-build --single"
+    "web": "expo start --web", 
+    "build": "npm i && npx expo export:web && npx serve web-build --single"
   },
   "dependencies": {
     "@expo/webpack-config": "^19.0.0",
