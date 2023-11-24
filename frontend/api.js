@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = "https://finance-app-2jdx.onrender.com/api";
+const baseURL = "https://localhost:3000/api";
 
 const axiosObj = axios.create({
   baseURL,
@@ -50,7 +50,9 @@ export const login = async (data, setSnackbarData) => {
 };
 
 ////////////////////////////////
-
+/*
+   get monthly statistics  
+*/
 export const monthWise = async (month, year, setSnackbarData) => {
   try {
     console.log(month, year);
@@ -66,7 +68,9 @@ export const monthWise = async (month, year, setSnackbarData) => {
 };
 
 /////////////////////////////////
-
+/*
+   search for users 
+*/
 export const searchUser = async (data, setSnackbarData) => {
   try {
     const resp = await axiosObj.post("/users/search", data);
@@ -81,7 +85,9 @@ export const searchUser = async (data, setSnackbarData) => {
 };
 
 //////////////////////////////////
-
+/*
+   gets details of particular user
+*/
 export const fetchUser = async (id, setSnackbarData) => {
   try {
     const resp = await axiosObj.get(`/users/${id}`);
@@ -97,7 +103,9 @@ export const fetchUser = async (id, setSnackbarData) => {
 };
 
 ////////////////////////////////
-
+/*
+   Move users from unpaid to paid and vice versa 
+*/
 export const updateUsers = async (data, setSnackbarData) => {
   try {
     const resp = await axiosObj.post(`/users/update`, data);
@@ -116,7 +124,9 @@ export const updateUsers = async (data, setSnackbarData) => {
   }
 };
 //////////////////////////////////
-
+/*
+   create set of users from excel file 
+*/
 export const createUsers = async (data, setSnackbarData) => {
   try {
     const resp = await axiosObj.post(`/users/create-users`, data);

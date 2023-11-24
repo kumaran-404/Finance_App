@@ -6,7 +6,7 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web", 
+    "web": "expo start --web",
     "build": "npm i && npx expo export:web && npx serve web-build --single"
   },
   "dependencies": {
@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "gh-pages": "^6.1.0",
     "react-native-svg-transformer": "^1.1.0"
   },
   "private": true
