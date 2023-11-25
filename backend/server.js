@@ -8,6 +8,7 @@ const authRoutes = require("./routes/authRoutes");
 const { ErrorMessage,tokenErrorMessage } = require("./utils/handler");
 const { getToken } = require("./validators/token");
 const cors = require("cors");
+const path = require('path');
 
 app.use(express.json());
 
@@ -18,6 +19,15 @@ app.use(
 );
 
 require("./models/User");
+
+console.log(path.dirname(__filename))
+
+app.use(express.static("../frontend/web-build"));
+
+console.log(__dirname)
+app.get('/', function (req, res) {
+  res.sendFile( '../frontend/web-build/index.html');
+});
 
 app.use("/api/auth", authRoutes);
 

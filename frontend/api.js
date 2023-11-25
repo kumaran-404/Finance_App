@@ -1,9 +1,7 @@
 import axios from "axios";
 
-const baseURL = "http://localhost:3000/api";
 
 const axiosObj = axios.create({
-  baseURL,
   validateStatus: (status) => {
     return status == 200;
   },
@@ -20,7 +18,7 @@ axiosObj.interceptors.request.use((req) => {
 ////////////////////////////////
 export const verifyJWT = async () => {
   try {
-    const resp = await axiosObj.post(`/auth/verifyJWT`);
+    const resp = await axiosObj.post(`/api/auth/verifyJWT`);
 
     return resp;
   } catch (err) {
@@ -31,7 +29,7 @@ export const verifyJWT = async () => {
 ////////////////////////////////
 export const login = async (data, setSnackbarData) => {
   try {
-    const resp = await axiosObj.post(`/auth/login`, data);
+    const resp = await axiosObj.post(`/api/auth/login`, data);
     setSnackbarData({
       message: "Welcome back",
       severity: "success",
@@ -56,7 +54,7 @@ export const login = async (data, setSnackbarData) => {
 export const monthWise = async (month, year, setSnackbarData) => {
   try {
     console.log(month, year);
-    const resp = await axiosObj.post("/users/month", { month, year });
+    const resp = await axiosObj.post("/api/users/month", { month, year });
     return resp;
   } catch (err) {
     setSnackbarData({
@@ -73,7 +71,7 @@ export const monthWise = async (month, year, setSnackbarData) => {
 */
 export const searchUser = async (data, setSnackbarData) => {
   try {
-    const resp = await axiosObj.post("/users/search", data);
+    const resp = await axiosObj.post("/api/users/search", data);
     return resp;
   } catch (err) {
     setSnackbarData({
@@ -90,7 +88,7 @@ export const searchUser = async (data, setSnackbarData) => {
 */
 export const fetchUser = async (id, setSnackbarData) => {
   try {
-    const resp = await axiosObj.get(`/users/${id}`);
+    const resp = await axiosObj.get(`/api/users/${id}`);
 
     return resp;
   } catch (err) {
@@ -108,7 +106,7 @@ export const fetchUser = async (id, setSnackbarData) => {
 */
 export const updateUsers = async (data, setSnackbarData) => {
   try {
-    const resp = await axiosObj.post(`/users/update`, data);
+    const resp = await axiosObj.post(`/api/users/update`, data);
 
     setSnackbarData({
       message: "Updated!!",
@@ -129,7 +127,7 @@ export const updateUsers = async (data, setSnackbarData) => {
 */
 export const createUsers = async (data, setSnackbarData) => {
   try {
-    const resp = await axiosObj.post(`/users/create-users`, data);
+    const resp = await axiosObj.post(`/api/users/create-users`, data);
     setSnackbarData({
       message: "Users created successfull",
       severity: "success",
