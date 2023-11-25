@@ -1,3 +1,4 @@
+
 {
   "name": "frontend",
   "version": "1.0.0",
@@ -7,8 +8,10 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "build": "npm i && npx expo export:web && npx serve web-build -l 80"
-  },
+    "build": "npm i && npx expo export:web "
+  }
+  
+  ,
   "dependencies": {
     "@expo/webpack-config": "^19.0.0",
     "@react-native-masked-view/masked-view": "^0.3.0",
