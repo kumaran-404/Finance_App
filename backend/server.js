@@ -26,7 +26,7 @@ app.use(express.static("../frontend/web-build"));
 
 console.log(__dirname)
 app.get('/', function (req, res) {
-  res.sendFile( '../frontend/web-build/index.html');
+  res.sendFile( 'index.html',{root:"../frontend/web-build"});
 });
 
 app.use("/api/auth", authRoutes);
