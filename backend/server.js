@@ -47,6 +47,6 @@ app.use("/api/auth", authRoutes);
 
 app.use("/api/users", userRoutes);
 
-app.listen(process.env.PORT, (err) => {
-  if (!err) console.log("Server Started ", process.env.PORT);
+app.listen(443, (err) => {
+  if (!err) console.log("Server Started ", 443);
 });
