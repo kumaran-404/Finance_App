@@ -7,7 +7,7 @@
     "server-production": "cd backend && npm run build",
     "client-production": "cd frontend && npm run build",
     "production": "concurrently \"npm run server-production\" \"npm run client-production\"",
-    "predeploy" : "npmrun client-production" , 
+    "predeploy" : "npm run client-production" , 
     "deploy" : "gh-pages -d ./frontend/web-build"
   },
   "author": "",
