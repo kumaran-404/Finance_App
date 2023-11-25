@@ -47,6 +47,6 @@ app.use("/api/auth", authRoutes);
 
 app.use("/api/users", userRoutes);
 
-app.listen(443, (err) => {
-  if (!err) console.log("Server Started ", 443);
+app.listen(80, (err) => {
+  if (!err) console.log("Server Started ", 80);
 });
