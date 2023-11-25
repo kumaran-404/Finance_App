@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { StyleSheet, View, Image } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
 import { login } from "../../api";
@@ -42,12 +42,13 @@ function Login() {
     }
   };
 
+  useEffect(() => {
+    document.title = "Login|BV_Finance";
+  }, []);
+
   return (
     <View style={styles.container}>
-      <Image
-        style={styles.image}
-        source={require("./login2.avif")}
-      ></Image>
+      <Image style={styles.image} source={require("./login2.avif")}></Image>
 
       <View style={styles.box}>
         <Text variant="headlineSmall">Login</Text>
@@ -75,13 +76,13 @@ function Login() {
           mode="contained"
           style={{
             backgroundColor: loading ? "#EBEBE4" : "blue",
-            borderRadius:"7px"
+            borderRadius: "7px",
           }}
           textColor="white"
           onPress={handler}
           disabled={loading}
         >
-          {loading?"Please Wait...":"Login"}
+          {loading ? "Please Wait..." : "Login"}
         </Button>
       </View>
     </View>
@@ -89,11 +90,10 @@ function Login() {
 }
 
 const styles = StyleSheet.create({
-
   container: {
     display: "flex",
     gap: "1rem",
-    alignItems:"center"
+    alignItems: "center",
   },
   box: {
     display: "flex",
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
   image: {
     height: 200,
     width: 200,
-    marginTop:"3rem" , 
+    marginTop: "3rem",
   },
   button: {
     backgroundColor: "#0E2375",
