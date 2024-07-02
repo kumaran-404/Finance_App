@@ -3,7 +3,7 @@ const app = express();
 const dotenv = require("dotenv");
 dotenv.config();
 const DBConnection = require("./utils/DBConnection");
-const userRoutes = require("./routes/UserRoutes");
+const userRoutes = require("./routes/User.js");
 const authRoutes = require("./routes/authRoutes");
 const { ErrorMessage,tokenErrorMessage } = require("./utils/handler");
 const { getToken } = require("./validators/token");
