@@ -11,14 +11,8 @@ const Pay = sequelize.define(
     year: {
       type: DataTypes.INTEGER,
     },
-    date: {
-      type: DataTypes.INTEGER,
-    },
-    time: {
-      type: DataTypes.TIME,
-    },
-    amountPaid: {
-      type: DataTypes.INTEGER,
+    isPaid: {
+      type: DataTypes.BOOLEAN,
     },
   },
   { freezeTableName: true }
