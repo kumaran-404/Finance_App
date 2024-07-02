@@ -38,7 +38,7 @@ sequelize
     console.error("Unable to connect to the database: ", error);
   });
 
-//sequelize.sync({ force: true }).then(() => console.log("Deleted all"));
+sequelize.sync({ force: true }).then(() => console.log("Deleted all"));
 sequelize
   .sync()
   .then(() => {

@@ -25,7 +25,7 @@ const Pay = sequelize.define(
 );
 
 // define one to many relationship
-User.User.hasMany(Pay);
-Pay.belongsTo(User.User);
+User.Emi.hasMany(Pay);
+Pay.belongsTo(User.Emi);
 
 module.exports = Pay;
