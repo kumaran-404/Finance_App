@@ -70,9 +70,10 @@ class _Calendar extends State<Calendar> {
       return Scaffold(
           body: Padding(
               padding: const EdgeInsets.only(left: 20, top: 50, bottom: 20),
-              child: SingleChildScrollView( child :  Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
+              child: SingleChildScrollView(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
                     TableCalendar(
                       calendarBuilders:
                           CalendarBuilders(markerBuilder: (context, t, l) {
@@ -116,10 +117,14 @@ class _Calendar extends State<Calendar> {
                           "year": DateTime.now().year
                         }, monthly);
 
-                        value.updateEvents(updateEvents(
-                            value.events, jsonDecode(resp.body)["data"]));
+                        if (resp.statusCode == 200) {
+                          if (jsonDecode(resp.body)["data"]) {
+                            value.updateEvents(updateEvents(
+                                value.events, jsonDecode(resp.body)["data"]));
 
-                        value.updateFetchedMonths(temp);
+                            value.updateFetchedMonths(temp);
+                          }
+                        }
                       },
                       onPageChanged: (DateTime t) async {
                         String temp = "${t.month}_${t.year}";
@@ -142,17 +147,16 @@ class _Calendar extends State<Calendar> {
                       firstDay: DateTime.utc(2010, 10, 16),
                       lastDay: DateTime.utc(2030, 3, 14),
                     ),
-                  Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: value.events
-                                .containsKey(getString(value.currentDate))
-                            ? <Widget>[
-                                for (var item in value
-                                    .events[getString(value.currentDate)])
-                                  item
-                              ]
-                            : [const Text("No entries for this day")],
-                      
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: value.events
+                              .containsKey(getString(value.currentDate))
+                          ? <Widget>[
+                              for (var item
+                                  in value.events[getString(value.currentDate)])
+                                item
+                            ]
+                          : [const Text("No entries for this day")],
                     )
                   ]))));
     });

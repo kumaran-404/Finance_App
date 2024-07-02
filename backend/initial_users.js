@@ -27,7 +27,7 @@ usersAccounts.map((item, pos) => {
 
 
 async function createUser() {
-  const resp = await axios.post("http://localhost:80/api/users/create-users", {
+  const resp = await axios.post("https://finance-app-2jdx.onrender.com/api/users/create-users", {
     data: users,
   });
   console.log(resp);

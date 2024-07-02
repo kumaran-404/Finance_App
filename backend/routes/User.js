@@ -198,7 +198,7 @@ router.post("/create-users", async (req, res) => {
 
     await t.commit();
 
-    return SuccessMessage({}, res);
+    return SuccessMessage({ message: "Manju ma mohan" }, res);
   } catch (err) {
     return ErrorMessage(err.message, res);
   }
@@ -325,8 +325,7 @@ router.get("/:id", async (req, res) => {
       include: {
         model: Emi,
         include: Pay,
-      }
-     
+      },
     });
 
     if (!u) return ErrorMessage("User not found", res);

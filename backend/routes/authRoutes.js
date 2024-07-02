@@ -8,22 +8,22 @@ const brcypt = require("bcrypt");
 const { createToken, getToken } = require("../validators/token");
 const router = require("express").Router();
 
-// router.post("/create-admin", async (req, res) => {
-//   try {
-//     const data = {
-//       isAdmin: true,
-//       password: "20232023",
-//       name: "Bala",
-//       phoneNumber: "8524862383",
-//     };
+router.post("/create-admin", async (req, res) => {
+  try {
+    const data = {
+      isAdmin: true,
+      password: "20232023",
+      name: "Bala",
+      phoneNumber: "8524862383",
+    };
 
-//     await User.create(data);
+    await User.create(data);
 
-//     return SuccessMessage("done", res);
-//   } catch (err) {
-//     return ErrorMessage("error", res);
-//   }
-// });
+    return SuccessMessage("done", res);
+  } catch (err) {
+    return ErrorMessage("error", res);
+  }
+});
 
 router.post("/login", async (req, res) => {
   try {
